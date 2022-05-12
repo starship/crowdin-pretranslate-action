@@ -37,11 +37,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const crowdin_api_client_1 = __importDefault(require("@crowdin/crowdin-api-client"));
-// credentials
+// Initialize Crowdin Client with API key from secrets
 const credentials = {
     token: core.getInput("api_key"),
 };
-// initialization of crowdin client
 const { projectsGroupsApi, sourceFilesApi, translationsApi, } = new crowdin_api_client_1.default(credentials);
 function getProjectFileIDs(projectID) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -52,7 +51,8 @@ function getProjectFileIDs(projectID) {
             });
         }
         catch (error) {
-            console.error(error);
+            core.error("Could not get file IDs: ");
+            core.error(JSON.stringify(error, null, 2));
             return [];
         }
     });
@@ -64,7 +64,8 @@ function getProjectLanguageIDs(projectID) {
             return response.data.targetLanguageIds;
         }
         catch (error) {
-            console.error(error);
+            core.error("Could not get language IDs: ");
+            core.error(JSON.stringify(error, null, 2));
             return [];
         }
     });
@@ -77,10 +78,8 @@ function preTranslationTMFromData(projectID, langIDs, fileIDs) {
             fileIds: fileIDs,
             method: x,
         };
-        console.log(request.languageIds);
+        core.info("Requesting translations for the following languages:" + langIDs.toString());
         const res = yield translationsApi.applyPreTranslation(projectID, request);
-        console.log("Finished pre-translation!");
-        console.log(res);
         return res;
     });
 }
@@ -90,19 +89,19 @@ function run() {
         const fIDs = yield getProjectFileIDs(projectID);
         const lIDs = yield getProjectLanguageIDs(projectID);
         const result = yield preTranslationTMFromData(projectID, lIDs, fIDs);
-        console.log("Finished!");
-        console.log(result);
+        return result;
     });
 }
 (() => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const output = yield run();
-        console.log("Success! The information for the pre-translation TM run is:");
-        console.log(output);
+        const out = yield run();
+        core.info("Success! The information for the pre-translation TM run is: ");
+        let string_rep = JSON.stringify(out, null, 2);
+        core.info(string_rep);
     }
     catch (e) {
-        console.error("An error occurred at the top level:");
-        console.error(e);
+        let string_rep = JSON.stringify(e, null, 2);
+        core.error("An error occurred at the top level: " + string_rep);
     }
     // `text` is not available here
 }))();

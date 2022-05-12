@@ -1,12 +1,10 @@
 import * as core from "@actions/core";
 import crowdin, { Credentials, TranslationsModel } from "@crowdin/crowdin-api-client";
 
-// credentials
+// Initialize Crowdin Client with API key from secrets
 const credentials: Credentials = {
   token: core.getInput("api_key"),
 };
-
-// initialization of crowdin client
 const {
   projectsGroupsApi,
   sourceFilesApi,
@@ -20,7 +18,8 @@ async function getProjectFileIDs(projectID: number) {
       return file.data.id;
     });
   } catch (error) {
-    console.error(error);
+    core.error("Could not get file IDs: ");
+    core.error(JSON.stringify(error, null, 2));
     return [];
   }
 }
@@ -30,7 +29,8 @@ async function getProjectLanguageIDs(projectID: number) {
     const response = await projectsGroupsApi.getProject(projectID);
     return response.data.targetLanguageIds;
   } catch (error) {
-    console.error(error);
+    core.error("Could not get language IDs: ");
+    core.error(JSON.stringify(error, null, 2));
     return [];
   }
 }
@@ -42,10 +42,8 @@ async function preTranslationTMFromData(projectID: number, langIDs: string[], fi
     fileIds: fileIDs,
     method: x,
   };
-  console.log(request.languageIds);
+  core.info("Requesting translations for the following languages:" + langIDs.toString());
   const res = await translationsApi.applyPreTranslation(projectID, request);
-  console.log("Finished pre-translation!");
-  console.log(res);
   return res;
 }
 
@@ -54,18 +52,18 @@ async function run() {
   const fIDs = await getProjectFileIDs(projectID);
   const lIDs = await getProjectLanguageIDs(projectID);
   const result = await preTranslationTMFromData(projectID, lIDs, fIDs);
-  console.log("Finished!");
-  console.log(result);
+  return result;
 }
 
 (async () => {
   try {
-    const output = await run();
-    console.log("Success! The information for the pre-translation TM run is:");
-    console.log(output);
+    const out = await run();
+    core.info("Success! The information for the pre-translation TM run is: ");
+    let string_rep = JSON.stringify(out, null, 2);
+    core.info(string_rep);
   } catch (e) {
-    console.error("An error occurred at the top level:");
-    console.error(e);
+    let string_rep = JSON.stringify(e, null, 2);
+    core.error("An error occurred at the top level: " + string_rep);
   }
   // `text` is not available here
 })();
