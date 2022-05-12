@@ -1,0 +1,13 @@
+name: 'Crowdin Pre-Translation Trigger'
+description: 'Triggers a global pre-translation on the specified project'
+author: 'Starship Authors'
+inputs:
+  project_id:
+    required: true
+    description: 'Project ID on Crowdin'
+  api_key:
+    required: true
+    description: 'API Key for Crowdin'
+runs:
+  using: 'node16'
+  main: 'dist/main.js'
