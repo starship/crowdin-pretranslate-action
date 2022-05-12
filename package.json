@@ -1,18 +1,14 @@
 {
-  "name": "typescript-action",
-  "version": "0.0.0",
+  "name": "crowdin-pretranslate-action",
+  "version": "0.1.0",
   "private": true,
-  "description": "TypeScript template action",
-  "main": "lib/main.js",
+  "description": "GH Action to trigger a Crowdin pretranslate",
+  "main": "src/main.ts",
   "scripts": {
     "build": "tsc",
+    "format": "dprint fmt",
     "package": "ncc build dist/main.js --source-map --license licenses.txt",
-    "format-check": "prettier --check '**/*.ts'",
-    "lint": "eslint src/**/*.ts"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "all": "npm run build && npm run package && npm run format"
   },
   "keywords": [
     "actions",
