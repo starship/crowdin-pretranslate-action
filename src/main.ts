@@ -36,8 +36,8 @@ async function getProjectLanguageIDs(projectID: number) {
 }
 
 async function preTranslationTMFromData(projectID: number, langIDs: string[], fileIDs: number[]) {
-  let x: TranslationsModel.Method = "tm"; // Translational memory
-  let request = {
+  const x: TranslationsModel.Method = "tm"; // Translational memory
+  const request = {
     languageIds: langIDs,
     fileIds: fileIDs,
     method: x,
