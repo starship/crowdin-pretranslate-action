@@ -21,7 +21,7 @@ jobs:
     name: Crowdin Translation Memory Trigger
     runs-on: ubuntu-latest
     steps:
-      - uses: chipbuster/crowdin-pretranslate-action@trunk
+      - uses: starship/crowdin-pretranslate-action@main
         with:
           project_id: <YOUR PROJECT ID>
           api_key: ${{ secrets.CROWDIN_API_KEY }}
