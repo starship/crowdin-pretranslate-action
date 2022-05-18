@@ -18,9 +18,8 @@ async function getProjectFileIDs(projectID: number) {
       return file.data.id;
     });
   } catch (error) {
-    core.error("Could not get file IDs: ");
-    core.error(JSON.stringify(error, null, 2));
-    return [];
+    core.error("Could not get project file IDs.");
+    throw (error);
   }
 }
 
@@ -29,9 +28,8 @@ async function getProjectLanguageIDs(projectID: number) {
     const response = await projectsGroupsApi.getProject(projectID);
     return response.data.targetLanguageIds;
   } catch (error) {
-    core.error("Could not get language IDs: ");
-    core.error(JSON.stringify(error, null, 2));
-    return [];
+    core.error("Could not get project language IDs");
+    throw (error);
   }
 }
 
@@ -63,7 +61,7 @@ async function run() {
     core.info(string_rep);
   } catch (e) {
     let string_rep = JSON.stringify(e, null, 2);
-    core.error("An error occurred at the top level: " + string_rep);
+    core.setFailed(string_rep);
   }
   // `text` is not available here
 })();
